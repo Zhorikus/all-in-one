@@ -19,50 +19,58 @@ class MainWindow(QMainWindow):
 
         self.cross = ButtonCross()
         self.central_wigdet.addSubWindow(self.cross)
+        self.cross.btn_right.clicked.connect(self.shift_right)
+        self.cross.btn_left.clicked.connect(self.shift_left)
+        self.cross.btn_up.clicked.connect(self.shift_up)
+        self.cross.btn_down.clicked.connect(self.shift_down)
 
         self.screen = ScreenShot()
         self.central_wigdet.addSubWindow(self.screen)
 
-        self.ok_button.clicked.connect(self.screen.take_screenshot)
-
-
-
-
-
-
-
+        self.ok_button.clicked.connect(self.shot_screenshot)
         self.layout = QVBoxLayout(self.central_wigdet)
 
+    def shot_screenshot(self):
+        self.screen.take_screenshot()
+        self.screen.show_screenshot()
+
+    def shift_right(self):
+        self.screen.x = self.screen.x + 5
+        print("ScreenShot X = "+ str(self.screen.x))
+    
+    def shift_left(self):
+        self.screen.x = self.screen.x - 5
+        print("ScreenShot X = "+ str(self.screen.x))
+
+    def shift_up(self):
+        self.screen.y = self.screen.y - 5
+        print("ScreenShot Y = "+ str(self.screen.y))
+
+    def shift_down(self):
+        self.screen.y = self.screen.y + 5
+        print("ScreenShot Y = "+ str(self.screen.y))
            
 class ScreenShot(QWidget):
     def __init__(self):
         super().__init__()
-        self.preview_screen = QApplication.primaryScreen().grabWindow(0)
-        self.settings()
-        self.create_widgets()
-        self.set_layout()
-
-    def settings(self):
-        self.resize(200, 200)
-        self.setWindowTitle("Screenshoter")
-        
-    def create_widgets(self):
+        self.x = 500
+        self.y = 500
+        self.preview_screen = QApplication.primaryScreen().grabWindow(QApplication.desktop().winId(),self.x,self.y,400,400)
         self.img_preview = QLabel()
-        # self.img_preview.setPixmap(self.preview_screen.scaled(600,60,Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        self.img_preview.setPixmap(self.preview_screen.scaled(self.width(),self.height(),Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
-
-    def set_layout(self):
         self.layout = QGridLayout(self)
         self.layout.addWidget(self.img_preview, 0, 0, alignment=Qt.AlignCenter)
         self.setLayout(self.layout)
 
-
-
     def take_screenshot(self):
-        self.preview_screen = QApplication.primaryScreen().grabWindow(QApplication.desktop().winId(),100,100,600,600)
-        self.img_preview.setPixmap(self.preview_screen.scaled(self.width(),self.height(),
-                                    Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.preview_screen = QApplication.primaryScreen().grabWindow(QApplication.desktop().winId(),self.x,self.y,400,400)
+        print(self.preview_screen.size())
+        self.img_preview.setPixmap(self.preview_screen)
+
+    def show_screenshot(self):
         self.show()
+
+
+
 
 
 
@@ -80,5 +88,3 @@ class ButtonCross(QWidget):
         self.grid.addWidget(self.btn_right,1,2)
         self.grid.addWidget(self.btn_down,2,1)
         self.setLayout(self.grid)
-
-
