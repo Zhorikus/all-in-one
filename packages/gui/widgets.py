@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLayout, QMdiArea, QVBoxLayout, QHBoxLayout, QGridLayout, QWidget, QPushButton, QWidget, QMenu, QLabel
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QThread, QTimer
 from PyQt5.QtGui import QIcon, QPixmap
 from PIL import Image, ImageGrab, ImageQt, ImageFilter
 # import pyqtgraph
@@ -28,7 +28,26 @@ class MainWindow(QMainWindow):
         self.central_wigdet.addSubWindow(self.screen)
 
         self.ok_button.clicked.connect(self.shot_screenshot)
+        self.ok_button.clicked.connect(self.toggle_timer)
+        # Timer start
+        self.timer_enable = False
+        self.timer = QTimer()
+        self.timer.setInterval(20)
+        self.timer.timeout.connect(self.shot_screenshot)
+        
+        # Timer end
         self.layout = QVBoxLayout(self.central_wigdet)
+
+
+    def toggle_timer(self):
+        if self.timer_enable:
+            self.timer_enable = False
+            self.timer.stop()
+        else: 
+            self.timer_enable = True
+            self.timer.start()
+
+        
 
     def shot_screenshot(self):
         self.screen.take_screenshot()
@@ -88,3 +107,8 @@ class ButtonCross(QWidget):
         self.grid.addWidget(self.btn_right,1,2)
         self.grid.addWidget(self.btn_down,2,1)
         self.setLayout(self.grid)
+
+
+class AutoplayThread(QThread):
+    def __init__(self):
+        super().__init__()
