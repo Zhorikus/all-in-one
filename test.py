@@ -51,49 +51,76 @@
 # sys.exit(root.exec_())
 
 
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+# from PyQt5.QtGui import *
+# from PyQt5.QtWidgets import *
+# from PyQt5.QtCore import *
 
-import time
+# import time
 
-class MainWindow(QMainWindow):
+# class MainWindow(QMainWindow):
 
 
-    def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+#     def __init__(self, *args, **kwargs):
+#         super(MainWindow, self).__init__(*args, **kwargs)
     
-        self.counter = 0
+#         self.counter = 0
     
-        layout = QVBoxLayout()
+#         layout = QVBoxLayout()
         
-        self.l = QLabel("Start")
-        b = QPushButton("DANGER!")
-        b.pressed.connect(self.oh_no)
+#         self.l = QLabel("Start")
+#         b = QPushButton("DANGER!")
+#         b.pressed.connect(self.oh_no)
     
-        layout.addWidget(self.l)
-        layout.addWidget(b)
+#         layout.addWidget(self.l)
+#         layout.addWidget(b)
     
-        w = QWidget()
-        w.setLayout(layout)
+#         w = QWidget()
+#         w.setLayout(layout)
     
-        self.setCentralWidget(w)
+#         self.setCentralWidget(w)
     
-        self.show()
+#         self.show()
 
-        self.timer = QTimer()
-        self.timer.setInterval(1000)
-        self.timer.timeout.connect(self.recurring_timer)
-        self.timer.start()
+#         self.timer = QTimer()
+#         self.timer.setInterval(1000)
+#         self.timer.timeout.connect(self.recurring_timer)
+#         self.timer.start()
     
-    def oh_no(self):
-        time.sleep(5)
+#     def oh_no(self):
+#         time.sleep(5)
 
-    def recurring_timer(self):
-        self.counter +=1
-        self.l.setText("Counter: %d" % self.counter)
+#     def recurring_timer(self):
+#         self.counter +=1
+#         self.l.setText("Counter: %d" % self.counter)
     
     
-app = QApplication([])
-window = MainWindow()
-app.exec_()
+# app = QApplication([])
+# window = MainWindow()
+# app.exec_()
+
+
+# from win32api import GetSystemMetrics
+
+# print("Width =", GetSystemMetrics(0))
+# print("Height =", GetSystemMetrics(1))
+
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLayout, QMdiArea, QVBoxLayout, QHBoxLayout, QGridLayout, QWidget, QPushButton, QWidget, QMenu, QLabel
+from PyQt5.QtCore import Qt, QSize, QThread, QTimer
+from PyQt5.QtGui import QIcon, QPixmap, QPixmap, QImage
+from PIL import Image, ImageGrab, ImageQt, ImageFilter
+from win32api import GetSystemMetrics
+import cv2
+import numpy as np
+
+channels_count = 4
+_width = 400
+_height = 400
+_x = 400
+_y = 400
+
+pixmap =  QApplication.primaryScreen().grabWindow(QApplication.desktop().winId(),self.x,self.y,400,400)
+image = pixmap.toImage()
+b = image.bits()
+# sip.voidptr must know size to support python buffer interface
+b.setsize( _height *  _width * channels_count)
+arr = np.frombuffer(b, np.uint8).reshape(( _height,  _width, channels_count))
