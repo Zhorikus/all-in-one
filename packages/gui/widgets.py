@@ -1,12 +1,13 @@
+import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLayout, QMdiArea, QVBoxLayout, QHBoxLayout, QGridLayout, QWidget, QPushButton, QWidget, QMenu, QLabel
 from PyQt5.QtCore import Qt, QSize, QThread, QTimer
 from PyQt5.QtGui import QIcon, QPixmap, QPixmap, QImage, QColor
-from PIL import Image, ImageGrab, ImageQt, ImageFilter
+from PIL import Image, ImageGrab, ImageQt
 from win32api import GetSystemMetrics
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-# import pyqtgraph
+import pyqtgraph
 
 
 
@@ -31,8 +32,11 @@ class MainWindow(QMainWindow):
         self.cross.btn_down.clicked.connect(self.shift_down)
         self.cross.btn_center.clicked.connect(self.shift_center)
 
-        self.screen = ScreenShot()
-        self.central_wigdet.addSubWindow(self.screen)
+        self.screen1 = ScreenShot()
+        self.screen2 = ScreenShot()
+
+        self.central_wigdet.addSubWindow(self.screen1)
+        self.central_wigdet.addSubWindow(self.screen2)
 
         self.start_button.clicked.connect(self.shot_screenshot)
         self.start_button.clicked.connect(self.toggle_timer)
@@ -57,39 +61,45 @@ class MainWindow(QMainWindow):
     # hier wir Qpixmap in die numpy arrray umgewandelt
 
     def shot_screenshot(self):
-        self.screen.take_screenshot()
+        self.screen1.take_screenshot()
 
-        image = self.screen.preview_screen.toImage()
+        image = self.screen1.preview_screen.toImage()
         s = image.bits().asstring(400 * 400 * 4)
         arr = np.fromstring(s, dtype=np.uint8).reshape((400, 400, 4))
         arr2 = cv2.cvtColor(arr,cv2.COLOR_BGR2GRAY)
-        ret,image = cv2.threshold(arr2,230,255,cv2.THRESH_BINARY)
+        # ret,image = cv2.threshold(arr2,70,255,cv2.THRESH_BINARY)
+        image = cv2.adaptiveThreshold(arr2,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,11,2)
+        image1 = cv2.adaptiveThreshold(arr2,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
         image2 = cv2.cvtColor(image,cv2.COLOR_GRAY2RGB)
+        image3 = cv2.cvtColor(image1,cv2.COLOR_GRAY2RGB)
         qimg = QImage(image2, 400, 400, QImage.Format_RGB888)
-        self.screen.preview_screen = QPixmap(qimg)
+        qimg2 = QImage(image3, 400, 400, QImage.Format_RGB888)
+        self.screen1.preview_screen = QPixmap(qimg)
+        self.screen2.preview_screen = QPixmap(qimg2)
        
-        self.screen.show_screenshot()
+        self.screen1.show_screenshot()
+        self.screen2.show_screenshot()
 
 
     def shift_right(self):
-        self.screen.x = self.screen.x + self.step
-        print("ScreenShot X = "+ str(self.screen.x))
+        self.screen1.x = self.screen1.x + self.step
+        print("ScreenShot X = "+ str(self.screen1.x))
     
     def shift_left(self):
-        self.screen.x = self.screen.x - self.step
-        print("ScreenShot X = "+ str(self.screen.x))
+        self.screen1.x = self.screen1.x - self.step
+        print("ScreenShot X = "+ str(self.screen1.x))
 
     def shift_up(self):
-        self.screen.y = self.screen.y - self.step
-        print("ScreenShot Y = "+ str(self.screen.y))
+        self.screen1.y = self.screen1.y - self.step
+        print("ScreenShot Y = "+ str(self.screen1.y))
 
     def shift_down(self):
-        self.screen.y = self.screen.y + self.step
-        print("ScreenShot Y = "+ str(self.screen.y))
+        self.screen1.y = self.screen1.y + self.step
+        print("ScreenShot Y = "+ str(self.screen1.y))
     
     def shift_center(self):
-        self.screen.x = GetSystemMetrics(0)/2-200
-        self.screen.y = GetSystemMetrics(1)/2-200
+        self.screen1.x = GetSystemMetrics(0)/2-200
+        self.screen1.y = GetSystemMetrics(1)/2-200
 
            
 class ScreenShot(QWidget):
