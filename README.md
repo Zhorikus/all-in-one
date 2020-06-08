@@ -1,1 +1,1 @@
-das ist nur zum testen
+das ist ein Projekt um Python besser zu lernen
