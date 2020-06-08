@@ -24,16 +24,14 @@ class MainWindow(QMainWindow):
         #init Start Button
         self.init_cross_button()
 
-        
-
         self.screen1 = ScreenShot()
         self.screen2 = ScreenShot()
 
         self.central_wigdet.addSubWindow(self.screen1)
         self.central_wigdet.addSubWindow(self.screen2)
 
-        # self.start_button.clicked.connect(self.shot_screenshot)
         self.start_button.clicked.connect(self.toggle_timer)
+
         # Timer start
         self.timer_enable = False
         self.timer = QTimer()
