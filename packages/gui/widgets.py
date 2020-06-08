@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import pyqtgraph
 
 
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -37,14 +36,13 @@ class MainWindow(QMainWindow):
         self.central_wigdet.addSubWindow(self.screen1)
         self.central_wigdet.addSubWindow(self.screen2)
 
-        #self.start_button.clicked.connect(self.shot_screenshot)
+        # self.start_button.clicked.connect(self.shot_screenshot)
         self.start_button.clicked.connect(self.toggle_timer)
         # Timer start
-        #self.timer_enable = False
-        #self.timer = QTimer()
-        #self.timer.setInterval(20)
-        #self.timer.timeout.connect(self.shot_screenshot)
-        
+        self.timer_enable = False
+        self.timer = QTimer()
+        self.timer.setInterval(20)
+        self.timer.timeout.connect(self.shot_screenshot)
         # Timer end
         self.layout = QVBoxLayout(self.central_wigdet)
 
@@ -70,7 +68,7 @@ class MainWindow(QMainWindow):
         s = image.bits().asstring(400 * 400 * 4)
         arr = np.fromstring(s, dtype=np.uint8).reshape((400, 400, 4))
         arr2 = cv2.cvtColor(arr,cv2.COLOR_BGR2GRAY)
-        # ret,image = cv2.threshold(arr2,70,255,cv2.THRESH_BINARY)
+        ret,image = cv2.threshold(arr2,70,255,cv2.THRESH_BINARY)
         image = cv2.adaptiveThreshold(arr2,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,11,2)
         image1 = cv2.adaptiveThreshold(arr2,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
         image2 = cv2.cvtColor(image,cv2.COLOR_GRAY2RGB)
@@ -145,7 +143,7 @@ class ImageAlgorithms(ScreenShot):
     def __init__(self, preview_screen):
         super().__init__()
         
-    def threshhold(self):
+    def threshold(self):
         img = np.array( )
         ret,thresh1 = cv2.threshold(img,127,255,cv2.THRESH_BINARY)
     
