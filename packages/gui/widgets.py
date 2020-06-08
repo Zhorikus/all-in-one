@@ -19,9 +19,8 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(QSize(640, 480))  
         self.step = 20
         
-        self.start_button = QPushButton(text="Start/Stop")
-        self.start_button.setFixedSize(100,30)
-        self.central_wigdet.addSubWindow(self.start_button)
+        #init Start Button
+        self.init_start_button()
 
         # Cross Button
         self.cross = ButtonCross()
@@ -38,17 +37,21 @@ class MainWindow(QMainWindow):
         self.central_wigdet.addSubWindow(self.screen1)
         self.central_wigdet.addSubWindow(self.screen2)
 
-        self.start_button.clicked.connect(self.shot_screenshot)
+        #self.start_button.clicked.connect(self.shot_screenshot)
         self.start_button.clicked.connect(self.toggle_timer)
         # Timer start
-        self.timer_enable = False
-        self.timer = QTimer()
-        self.timer.setInterval(20)
-        self.timer.timeout.connect(self.shot_screenshot)
+        #self.timer_enable = False
+        #self.timer = QTimer()
+        #self.timer.setInterval(20)
+        #self.timer.timeout.connect(self.shot_screenshot)
         
         # Timer end
         self.layout = QVBoxLayout(self.central_wigdet)
 
+    def init_start_button(self):
+        self.start_button = QPushButton(text="Start/Stop")
+        self.start_button.setFixedSize(100,30)
+        self.central_wigdet.addSubWindow(self.start_button)
 
     def toggle_timer(self):
         if self.timer_enable:
