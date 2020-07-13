@@ -1,5 +1,9 @@
 import os
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLayout, QMdiArea, QVBoxLayout, QHBoxLayout, QGridLayout, QWidget, QPushButton, QWidget, QMenu, QLabel
+import time
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QLayout, QMdiArea 
+                             , QVBoxLayout, QHBoxLayout, QGridLayout, QWidget 
+                             , QPushButton, QWidget, QMenu, QLabel, QAction
+                             , QDockWidget)
 from PyQt5.QtCore import Qt, QSize, QThread, QTimer
 from PyQt5.QtGui import QIcon, QPixmap, QPixmap, QImage, QColor
 from PIL import Image, ImageGrab, ImageQt
@@ -9,36 +13,70 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pyqtgraph
 
+### MODULVARIABLEN ###
+mainwindow_instance = None
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.central_wigdet = QMdiArea()
-        self.setCentralWidget(self.central_wigdet)
-        self.setMinimumSize(QSize(640, 480))  
-        self.step = 20
+        global mainwindow_instance
+        mainwindow_instance = self
+        self.layout_locked  = False
+        self.central_widget = QWidget()
+        self.central_widget.setFixedHeight(0)
+        self.setDockOptions(QMainWindow.AllowTabbedDocks)
+        self.setDockNestingEnabled(True)
+        self.dock_object_names = set()
+        self.setCentralWidget(self.central_widget)
+        self._initUI()
+
+
+        dock = QDockWidget(parent=self,)
+        dock.setWidget(QWidget())
+        dock.setFeatures(dock.DockWidgetMovable | dock.DockWidgetClosable)
+
+
+
+    def _initUI(self):
+        #init menubar        
+        self.menubar  = self.menuBar()
+        #init file
+        self.file_menu  = self.menubar.addMenu('&File')
+        self.test_menu  = self.file_menu.addMenu('&Test')
+        self.testAction = QAction('Test!!', self)
+        self.testAction.triggered.connect(lambda: self.test_print())
+        self.test2_menu = self.test_menu.addAction(self.testAction)
+        self.exit_action = QAction('&Exit', self)
+        self.exit_action.triggered.connect(self.close)
+        self.file_menu.addAction(self.exit_action)
+        #init action
+        self.action_menu = self.menubar.addMenu("&Action")
+        self.action_start = QAction("&Start")
+        self.action_start.triggered.connect(lambda: self.test_print())
+        self.start_menu = self.action_menu.addAction(self.action_start)
         
+    
         #init Start Button
-        self.init_start_button()
+        # self.init_start_button()
 
-        #init Start Button
-        self.init_cross_button()
+        # #init Start Button
+        # self.init_cross_button()
 
-        self.screen1 = ScreenShot()
-        self.screen2 = ScreenShot()
+        # self.screen1 = ScreenShot()
+        # self.screen2 = ScreenShot()
 
-        self.central_wigdet.addSubWindow(self.screen1)
-        self.central_wigdet.addSubWindow(self.screen2)
+        # self.central_wigdet.addSubWindow(self.screen1)
+        # self.central_wigdet.addSubWindow(self.screen2)
 
-        self.start_button.clicked.connect(self.toggle_timer)
+        # self.start_button.clicked.connect(self.toggle_timer)
 
-        # Timer start
-        self.timer_enable = False
-        self.timer = QTimer()
-        self.timer.setInterval(20)
-        self.timer.timeout.connect(self.shot_screenshot)
-        # Timer end
-        self.layout = QVBoxLayout(self.central_wigdet)
+        # # Timer start
+        # self.timer_enable = False
+        # self.timer = QTimer()
+        # self.timer.setInterval(20)
+        # self.timer.timeout.connect(self.shot_screenshot)
+        # # Timer end
+        # self.layout = QVBoxLayout(self.central_wigdet)
 
     def init_start_button(self):
         # Start Button
@@ -107,6 +145,8 @@ class MainWindow(QMainWindow):
         self.screen1.x = GetSystemMetrics(0)/2-200
         self.screen1.y = GetSystemMetrics(1)/2-200
 
+    def test_print(self):
+        print(time.time(), "test print")
            
 class ScreenShot(QWidget):
     def __init__(self):
