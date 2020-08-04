@@ -12,6 +12,8 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import pyqtgraph
+from packages.gui.taschenrechner import PyCalcCtrl
+
 
 ### MODULVARIABLEN ###
 mainwindow_instance = None
@@ -26,23 +28,15 @@ class MainWindow(QMainWindow):
         self.central_widget.setFixedHeight(0)
         self.setDockOptions(QMainWindow.AllowTabbedDocks)
         self.setDockNestingEnabled(True)
-        self.dock_object_names = set()
         self.setCentralWidget(self.central_widget)
         self._initUI()
-
-
-        dock = QDockWidget(parent=self,)
-        dock.setWidget(QWidget())
-        dock.setFeatures(dock.DockWidgetMovable | dock.DockWidgetClosable)
-
-
 
     def _initUI(self):
         #init menubar        
         self.menubar  = self.menuBar()
         #init file
         self.file_menu  = self.menubar.addMenu('&File')
-        self.test_menu  = self.file_menu.addMenu('&Test')
+        self.test_menu  = self.file_menu.addMenu('&Test_menu')
         self.testAction = QAction('Test!!', self)
         self.testAction.triggered.connect(lambda: self.test_print())
         self.test2_menu = self.test_menu.addAction(self.testAction)
@@ -50,12 +44,31 @@ class MainWindow(QMainWindow):
         self.exit_action.triggered.connect(self.close)
         self.file_menu.addAction(self.exit_action)
         #init action
-        self.action_menu = self.menubar.addMenu("&Action")
-        self.action_start = QAction("&Start")
-        self.action_start.triggered.connect(lambda: self.test_print())
-        self.start_menu = self.action_menu.addAction(self.action_start)
+        self.tool_menu = self.menubar.addMenu("&Tools")
+        self.tool_calc = QAction("&Taschenrechner")
+        self.tool_calc.triggered.connect(lambda: self.add_calc())
+        self.tool_menu.addAction(self.tool_calc)
+
+    def add_calc(self):
+        calc = PyCalcCtrl()
+        dockwidget = QDockWidget(parent = self,)
+        dockwidget.setWidget(calc)
+        dockwidget.setObjectName("Taschenrechner")
+        dockwidget.setWindowTitle("Taschenrechner")
+        dockwidget.setFeatures(dockwidget.DockWidgetMovable | dockwidget.DockWidgetClosable)
+        self.addDockWidget(Qt.TopDockWidgetArea, dockwidget)
+
+
+
+
+
+
+
+
+
+
+
         
-    
         #init Start Button
         # self.init_start_button()
 
