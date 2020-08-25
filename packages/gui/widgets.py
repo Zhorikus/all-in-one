@@ -13,7 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pyqtgraph
 from packages.gui.taschenrechner import PyCalcCtrl
-from packages.gui.youtubedownloader import YoutubeDownloader
+from packages.gui.youtubedownloader import YoutubeDownloaderGUI
 
 ### MODULVARIABLEN ###
 mainwindow_instance = None
@@ -52,7 +52,7 @@ class MainWindow(QMainWindow):
         self.tool_calc.triggered.connect(lambda: self.add_calc())
         self.tool_menu.addAction(self.tool_calc)
         #Youtubeloader
-        self.tool_youtubedownloader = QAction("&Youtubeloader")
+        self.tool_youtubedownloader = QAction("&YoutubeDownloader")
         self.tool_youtubedownloader.triggered.connect(lambda: self.add_youtubedownloader())
         self.tool_menu.addAction(self.tool_youtubedownloader)
 
@@ -66,7 +66,7 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.TopDockWidgetArea, dockwidget)
 
     def add_youtubedownloader(self):
-        widget = YoutubeDownloader()
+        widget = YoutubeDownloaderGUI()
         dockwidget = QDockWidget(parent = self,)
         dockwidget.setWidget(widget)
         dockwidget.setObjectName("Youtube Downloader")

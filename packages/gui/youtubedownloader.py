@@ -24,7 +24,6 @@ class YoutubeDownloaderGUI(QWidget):
         self._createURL()
         self._createDataType()
         self._createSaveFolder()
-        self._createStart()
         self.setLayout(self.generalLayout)
 
     def _createURL(self):
