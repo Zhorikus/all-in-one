@@ -13,7 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pyqtgraph
 from packages.gui.taschenrechner import PyCalcCtrl
-
+from packages.gui.youtubedownloader import YoutubeDownloader
 
 ### MODULVARIABLEN ###
 mainwindow_instance = None
@@ -21,6 +21,8 @@ mainwindow_instance = None
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.setWindowTitle("all in one")
+        self.setGeometry(300,300, 400, 600)
         global mainwindow_instance
         mainwindow_instance = self
         self.layout_locked  = False
@@ -45,20 +47,32 @@ class MainWindow(QMainWindow):
         self.file_menu.addAction(self.exit_action)
         #init action
         self.tool_menu = self.menubar.addMenu("&Tools")
+        #Taschenrechner
         self.tool_calc = QAction("&Taschenrechner")
         self.tool_calc.triggered.connect(lambda: self.add_calc())
         self.tool_menu.addAction(self.tool_calc)
+        #Youtubeloader
+        self.tool_youtubedownloader = QAction("&Youtubeloader")
+        self.tool_youtubedownloader.triggered.connect(lambda: self.add_youtubedownloader())
+        self.tool_menu.addAction(self.tool_youtubedownloader)
 
     def add_calc(self):
-        calc = PyCalcCtrl()
+        widget = PyCalcCtrl()
         dockwidget = QDockWidget(parent = self,)
-        dockwidget.setWidget(calc)
+        dockwidget.setWidget(widget)
         dockwidget.setObjectName("Taschenrechner")
         dockwidget.setWindowTitle("Taschenrechner")
         dockwidget.setFeatures(dockwidget.DockWidgetMovable | dockwidget.DockWidgetClosable)
         self.addDockWidget(Qt.TopDockWidgetArea, dockwidget)
 
-
+    def add_youtubedownloader(self):
+        widget = YoutubeDownloader()
+        dockwidget = QDockWidget(parent = self,)
+        dockwidget.setWidget(widget)
+        dockwidget.setObjectName("Youtube Downloader")
+        dockwidget.setWindowTitle("Youtube Downloader")
+        dockwidget.setFeatures(dockwidget.DockWidgetMovable | dockwidget.DockWidgetClosable)
+        self.addDockWidget(Qt.TopDockWidgetArea, dockwidget)
 
 
 

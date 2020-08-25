@@ -121,17 +121,3 @@ class PyCalcCtrl(PyCalcUi):
 
         return result
 
-
-# Client code
-def main():
-    """Main function."""
-    # Create an instance of QApplication
-    app = QApplication(sys.argv)
-    # Show the calculator's GUI
-    # Create instances of the model and the controller
-    PyCalcCtrl()
-    # Execute the calculator's main loop
-    sys.exit(app.exec_())
-
-if __name__ == '__main__':
-    main()
