@@ -5,13 +5,14 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QGridLayout
                             , QLineEdit, QPushButton, QVBoxLayout,QHBoxLayout
                             , QComboBox, QTextEdit, QCheckBox)
-from pytube import YouTube
-from pytube import Playlist
+from pytube import YouTube, Playlist
 from mhmovie.code import *
 import inspect
 import re
 import time
+from threading import Thread
 from moviepy.editor import *
+
 
 
 class YoutubeDownloaderGUI(QWidget):
@@ -21,12 +22,12 @@ class YoutubeDownloaderGUI(QWidget):
         self.setGeometry(0,0,300,300)
         self.generalLayout = QVBoxLayout()
         # Create layout
-        self._createURL()
-        self._createDataType()
-        self._createSaveFolder()
+        self._create_url()
+        self._create_data_type()
+        self._create_save_folder()
         self.setLayout(self.generalLayout)
 
-    def _createURL(self):
+    def _create_url(self):
         qhlayout = QGridLayout()
         self.url_text = QLineEdit(self)
         self.url_text.setText("Youtube URL")
@@ -35,7 +36,7 @@ class YoutubeDownloaderGUI(QWidget):
         qhlayout.addWidget(self.check_button,1,1)
         self.generalLayout.addLayout(qhlayout)
 
-    def _createDataType(self):
+    def _create_data_type(self):
         qhlayout = QHBoxLayout()
         self.data_type = QComboBox(self)
         self.data_type.addItem("Video")
@@ -46,7 +47,7 @@ class YoutubeDownloaderGUI(QWidget):
         qhlayout.addWidget(self.mp3_checkbox)
         self.generalLayout.addLayout(qhlayout)
 
-    def _createSaveFolder(self):
+    def _create_save_folder(self):
         qhlayout = QGridLayout()
         self.save_path = QLineEdit(self)
         self.save_path.setText("E:\\Musik\\")
@@ -63,10 +64,12 @@ class YoutubeDownloaderGUI(QWidget):
                 "data_type"       : str(self.data_type.currentText()),
                 "mp3_checkbox"    : self.mp3_checkbox.isChecked()
         }
-        s_time = time.time()
-        video = YoutubeDownloader(config)
-        print("Zeit: ", round(time.time()-s_time,3), "sec.")
-        del video
+        start_thread = YoutubeThread(config)
+        start_thread.start()
+        # s_time = time.time()
+        # video = YoutubeDownloader(config)
+        # print("Zeit: ", round(time.time()-s_time,3), "sec.")
+        # del video
 
 class YoutubeDownloader():
     def __init__(self, config: dict = {}, ):
@@ -156,7 +159,7 @@ class YoutubeDownloader():
                 print("Error by load url: {}" .format(e))
                 print("URL: " + str(self.url))
                 print("try it {} again...".format(self.counter))
-                if self.counter > 5:
+                if self.counter > 10:
                     print("it could't be loaded")
                     self.ytd = ""
                     self.data_name = ""
@@ -200,9 +203,14 @@ class YoutubeDownloader():
                     self.mp4_to_mp3()
 
     def file_exists(self):
-        if self.data_name is not None:
-            path = self.save_path + self.data_name + ".mp4"
-            return os.path.exists(path)
+        if self.data_name is not None and self.data_type == "Video":
+            path = self.save_path + self.data_name
+            result = os.path.exists(path + ".mp4")
+            return result
+        elif self.data_name is not None and self.data_type == "Audio":
+            path = self.save_path + self.data_name
+            result = os.path.exists(path+ ".mp4") or os.path.exists(path+ ".mp3")
+            return result
         else:
             return True
 
@@ -217,6 +225,17 @@ class YoutubeDownloader():
 
     def mp4_to_mp3(self):
         os.rename(self.save_path + self.data_name + ".mp4",self.save_path + self.data_name + ".mp3")
+
+class YoutubeThread(Thread):
+    def __init__(self, config):
+        Thread.__init__(self)
+        self.config = config
+
+    def run(self):
+        s_time = time.time()
+        video = YoutubeDownloader(self.config)
+        print("Zeit: ", round(time.time()-s_time,3), "sec.")
+        del video
 
 class MainWindow(QMainWindow):
     def __init__(self):
