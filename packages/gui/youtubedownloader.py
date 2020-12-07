@@ -50,7 +50,7 @@ class YoutubeDownloaderGUI(QWidget):
     def _create_save_folder(self):
         qhlayout = QGridLayout()
         self.save_path = QLineEdit(self)
-        self.save_path.setText("E:\\Musik\\")
+        self.save_path.setText("D:\\Musik\\")
         qhlayout.addWidget(self.save_path,0,0)
         self.start_button = QPushButton("Download")
         self.start_button.clicked.connect(lambda: self.start_prozess())
@@ -100,14 +100,14 @@ class YoutubeDownloader():
             print("Kein gültige Auswahl")
 
     def start_prozess_video(self):    
-        if "watch" in self.url and "youtube" in self.url:
+        if "youtube" in self.url:
             self.create_youtube_object()
             if not self.file_exists():
                 print(self.data_name)
                 self.video_download()
             else:
                 print(self.data_name, "--------- EXIST ---------")
-        elif "playlist" in self.url and "youtube" in self.url:
+        elif "list" in self.url and "youtube" in self.url:
             print("Es ist sogar eine Playliste...")
             play_list = self.create_youtube_playlist()
             for index, title in enumerate(play_list):
