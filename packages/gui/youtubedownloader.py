@@ -1,12 +1,8 @@
-import sys
 import os
-from functools import partial
-# from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QGridLayout
-, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout
-, QComboBox, QCheckBox)
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QGridLayout,
+                             QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout,
+                             QComboBox, QCheckBox)
 from pytube import YouTube, Playlist
-# from mhmovie.code import *
 import inspect
 import re
 import time
@@ -82,6 +78,8 @@ class YoutubeDownloader():
             self.data_type = config["data_type"]
         if "mp3_checkbox" in config.keys():
             self.mp3_checked = config["mp3_checkbox"]
+
+        self.video = None
 
         self.default_audio_name = "audio"
         self.default_video_name = "video"
