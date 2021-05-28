@@ -120,7 +120,7 @@ class YoutubeDownloader():
             print("ist kein Youtube URL")
 
     def start_prozess_audio(self):
-        if "youtube" in self.url and "list" not in self.url:
+        if "youtube" in self.url:
             self.create_youtube_object()
             if not self.file_exists():
                 print(self.data_name)
@@ -130,9 +130,10 @@ class YoutubeDownloader():
         elif "list" in self.url and "youtube" in self.url:
             print("Es ist sogar eine Playliste...")
             play_list = self.create_youtube_playlist()
+            print(f"Das ist die Playliste {play_list}.")
             for index, title in enumerate(play_list):
+                print(index, title)
                 self.create_youtube_object(title)
-
                 if not self.file_exists():
                     print(index, " : ", self.data_name)
                     self.audio_download()
@@ -188,10 +189,12 @@ class YoutubeDownloader():
                 self.combine()
 
     def audio_download(self):
+        print("Audio Download Startet")
         if isinstance(self.ytd, YouTube):
             stream = self.ytd.streams.filter(only_audio=True, mime_type="audio/mp4").first()
             if stream is not None:
                 if self.data_type == "Audio":
+                    print(stream)
                     self.audio = stream.download(output_path=self.save_path, filename=self.data_name,
                                                  skip_existing=False)
                 else:
@@ -199,6 +202,8 @@ class YoutubeDownloader():
                                                  skip_existing=False)
                 if self.mp3_checked and self.data_type == "Audio":
                     self.mp4_to_mp3()
+            else:
+                print(f"Stream is None")
 
     def file_exists(self):
         if self.data_name is not None and self.data_type == "Video":
